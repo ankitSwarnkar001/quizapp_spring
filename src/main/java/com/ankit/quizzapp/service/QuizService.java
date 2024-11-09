@@ -5,6 +5,7 @@ import com.ankit.quizzapp.dao.QuizDao;
 import com.ankit.quizzapp.entities.Question;
 import com.ankit.quizzapp.entities.QuestionWrappper;
 import com.ankit.quizzapp.entities.Quiz;
+import com.ankit.quizzapp.entities.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +47,19 @@ public class QuizService {
        }
 
        return new ResponseEntity<>(questionForUser, HttpStatus.OK);
+    }
+
+    public ResponseEntity<Integer> calculateResult(Integer id, List<Response> responses) {
+        Quiz quiz = quizDao.findById(id).get(); // if you use optional get() is enough to get you details
+        List<Question> questions = quiz.getQuestions();// we got the quiz questions
+        int right=0;
+        int i=0;
+        for(Response response: responses){
+            if(response.getResponse().equals(questions.get(i).getRightAnswer())){
+                right++;
+            }
+            i++;
+        }
+        return new ResponseEntity<>(right,HttpStatus.OK);
     }
 }
